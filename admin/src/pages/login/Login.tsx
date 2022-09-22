@@ -4,7 +4,8 @@ import { Container, Logo, LoginForm } from "./css/style-Login";
 import { useNavigate } from "react-router-dom";
 import { useInput } from "../../hooks/use-input";
 
-const validateId = (value: string) => value.trim().length > 0;
+const validateId = (value: string) =>
+  value.trim().length > 0 && value.includes("@");
 const validatePassword = (value: string) => value.trim().length > 0;
 
 const Login = () => {
