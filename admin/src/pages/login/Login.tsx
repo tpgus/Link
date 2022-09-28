@@ -47,6 +47,7 @@ const Login = () => {
         </p>
       </LoginForm>
       <button onClick={loginHandler}>로그인</button>
+      <p>아직 회원이 아니신가요?</p>
     </Container>
   );
 };
