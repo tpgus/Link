@@ -3,31 +3,24 @@ import uuid from "react-uuid";
 import { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { HeaderContainer, Logo, NavMenu } from "./css/style-Header";
-import Login from "../login/Login";
 
 const menus = [
   {
     name: "문의하기",
     path: "/qna",
   },
+  {
+    name: "로그인",
+    path: "/login",
+  },
 ];
 
 const Header = () => {
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const navigate = useNavigate();
   const isLogin = false;
 
-  const openLoginModal = () => {
-    setLoginModalOpen(true);
-  };
-
-  const closeLoginModal = () => {
-    setLoginModalOpen(false);
-  };
-
   return (
     <HeaderContainer>
-      {loginModalOpen && <Login onClose={closeLoginModal} />}
       <Logo onClick={() => navigate("/")}>
         <img src={logo} alt="logo" />
       </Logo>
@@ -43,7 +36,6 @@ const Header = () => {
               </NavLink>
             </li>
           ))}
-          {!isLogin && <li onClick={openLoginModal}>로그인</li>}
         </ul>
       </NavMenu>
     </HeaderContainer>
