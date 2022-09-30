@@ -1,22 +1,16 @@
 import styled from "styled-components";
 
 export const LoginContainer = styled.div`
-  width: 25%;
-  height: 70vh;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 
   .find-info {
     margin-top: 0.5rem;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     width: 60%;
     color: rgba(0, 0, 0, 0.5);
     font-size: 0.8rem;
@@ -46,13 +40,14 @@ export const LoginContainer = styled.div`
       }
     }
   }
-`;
 
-export const Logo = styled.div`
-  margin-top: 4rem;
-  text-align: center;
-  img {
-    width: 10rem;
+  .signup-wrapper {
+    position: absolute;
+    bottom: 2rem;
+    color: rgba(0, 0, 0, 0.5);
+    a {
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -69,6 +64,7 @@ export const LoginForm = styled.form`
     border: 1px solid #9d9d9d;
     padding: 0.5rem;
     margin: 0.5rem;
+    /* font-size: 1.1rem; */
   }
 
   button {

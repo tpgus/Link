@@ -11,7 +11,7 @@ const menus = [
   },
   {
     name: "로그인",
-    path: "/login",
+    path: "/member/login",
   },
 ];
 

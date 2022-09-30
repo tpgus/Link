@@ -1,28 +1,20 @@
-import logo from "../assets/logo.png";
-import kakaoBtn from "../assets/kakao_login_medium.png";
-import { useState, useEffect } from "react";
-import { useInput } from "../hooks/use-input";
-import {
-  LoginContainer,
-  LoginForm,
-  Logo,
-  SocialLogin,
-} from "./css/style-Login";
-import { Link, useNavigate } from "react-router-dom";
+import kakaoBtn from "../../assets/kakao_login_medium.png";
+import { useNavigate, Link } from "react-router-dom";
+import { LoginContainer, LoginForm, SocialLogin } from "./css/style-Login";
+import { useEffect, useState } from "react";
+import { useInput } from "../../hooks/use-input";
 
 const validateId = (value: string) =>
   value.trim().length > 0 && value.includes("@");
-const validatePassword = (value: string) => value.trim().length > 0;
+const validatePassword = (value: string) => value.trim().length > 8;
 
 const Login = () => {
-  const navigate = useNavigate();
   const [formIsInValid, setFormIsInvalid] = useState(false);
   const id = useInput(validateId);
   const password = useInput(validatePassword);
-
   useEffect(() => {
     // 에러 메시지가 표시된 이후, 사용자가 다시 입력할 때 에러 메시지 숨기기
-    if (formIsInValid && (id.isTouched || password.isTouched)) {
+    if (formIsInValid && id.isTouched && password.isTouched) {
       setFormIsInvalid(false);
     }
   }, [formIsInValid, id.isTouched, password.isTouched]);
@@ -30,11 +22,10 @@ const Login = () => {
   const loginHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id.validateValue() && password.validateValue()) {
-      navigate("/admin", { replace: true });
+      id.resetValue();
     } else {
       setFormIsInvalid(true);
     }
-    id.resetValue();
     password.resetValue();
     testFunc();
   };
@@ -49,15 +40,12 @@ const Login = () => {
 
   return (
     <LoginContainer>
-      <Logo>
-        <img src={logo} alt="logo" />
-      </Logo>
       <LoginForm onSubmit={loginHandler}>
         <input
           onChange={id.inputHandler}
           value={id.value}
-          type="text"
-          placeholder="아이디를 입력하세요"
+          type="email"
+          placeholder="아이디를 입력하세요 example@google.com"
         />
         <input
           onChange={password.inputHandler}
@@ -71,18 +59,12 @@ const Login = () => {
         <button type="submit">로그인</button>
       </LoginForm>
       <div className="find-info">
-        <ul onClick={testFunc}>
+        <ul>
           <li>
-            {/* <Link to="/signup">회원가입</Link> */}
-            회원가입
+            <Link to={"/member/findId"}>아이디 찾기</Link>
           </li>
           <li>
-            {/* <Link to="/find-id">아이디 찾기</Link> */}
-            아이디 찾기
-          </li>
-          <li>
-            {/* <Link to="/find-password">비밀번호 찾기</Link> */}
-            비밀번호 찾기
+            <Link to={"/member/findPassword"}>비밀번호 찾기</Link>
           </li>
         </ul>
       </div>
@@ -92,6 +74,9 @@ const Login = () => {
           <img src={kakaoBtn} alt="kakao-btn" />
         </button>
       </SocialLogin>
+      <div className="signup-wrapper">
+        아직 회원이 아니신가요? <Link to="/member/signup">회원가입</Link>
+      </div>
     </LoginContainer>
   );
 };

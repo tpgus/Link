@@ -5,7 +5,11 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/Home";
 import MyPage from "./pages/MyPage";
 import QNA from "./pages/QNA";
-import Login from "./pages/Login";
+import Auth from "./pages/Auth";
+import Login from "./components/auth/Login";
+import SignUp from "./components/auth/SignUp";
+import FindId from "./components/auth/FindId";
+import FindPassword from "./components/auth/FindPassword";
 
 function App() {
   return (
@@ -16,7 +20,12 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/qna" element={<QNA />} />
       </Route>
-      <Route path="/login" element={<Login />}></Route>
+      <Route path="/member" element={<Auth />}>
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<SignUp />} />
+        <Route path="findId" element={<FindId />} />
+        <Route path="findPassword" element={<FindPassword />} />
+      </Route>
     </Routes>
   );
 }
