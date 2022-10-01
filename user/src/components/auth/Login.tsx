@@ -1,17 +1,37 @@
 import kakaoBtn from "../../assets/kakao_login_medium.png";
-import { useNavigate, Link } from "react-router-dom";
 import { LoginContainer, LoginForm, SocialLogin } from "./css/style-Login";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { authAPI } from "../../apis/api/auth";
+import { Link } from "react-router-dom";
+import { useHttp } from "../../hooks/use-http";
 import { useInput } from "../../hooks/use-input";
 
 const validateId = (value: string) =>
   value.trim().length > 0 && value.includes("@");
-const validatePassword = (value: string) => value.trim().length > 8;
+const validatePassword = (value: string) => value.trim().length > 5;
+
+interface ResponseType {
+  idToken: string;
+  email: string;
+  refreshToken: string;
+  expiresIn: string;
+  localId: string;
+  registered: boolean;
+}
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formIsInValid, setFormIsInvalid] = useState(false);
   const id = useInput(validateId);
   const password = useInput(validatePassword);
+  const {
+    sendRequest: signInRequest,
+    data,
+    status,
+    error,
+  } = useHttp<ResponseType>(authAPI.signIn);
+
   useEffect(() => {
     // 에러 메시지가 표시된 이후, 사용자가 다시 입력할 때 에러 메시지 숨기기
     if (formIsInValid && id.isTouched && password.isTouched) {
@@ -22,21 +42,25 @@ const Login = () => {
   const loginHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id.validateValue() && password.validateValue()) {
+      signInRequest({ email: id.value, password: password.value });
       id.resetValue();
     } else {
       setFormIsInvalid(true);
     }
     password.resetValue();
-    testFunc();
   };
 
   const socialLoginHandler = (type: string) => {
     alert(`${type} 로그인 클릭`);
   };
 
-  const testFunc = () => {
-    alert("카카오 로그인을 이용해 주세요");
-  };
+  if (data && !error && status === "completed") {
+    navigate("/home", { replace: true });
+  }
+
+  if (error && status === "completed") {
+    console.log(error);
+  }
 
   return (
     <LoginContainer>
