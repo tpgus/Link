@@ -9,18 +9,23 @@ interface ErrorType {
   };
 }
 
-export const useHttp = <T>(requestFunction: Function) => {
-  const [data, setData] = useState<T[] | T>([]);
+type RequestFunctionType<T> = (value?: any) => Promise<T>;
+//requestFunction은 실제 API 요청 로직을 담고 있는 함수 : apis/api 경로 참조
+//requestFunction 함수 타입을 정의하는 시점에서는 매개변수 'value'는 어떠한 타입도 올 수 있다. (이때에는 어떤 타입이 전달될 지 모름)
+//중요한 점은 이 함수가 Promise 객체를 반환한다는 것.
+//실제 api를 요청하는 시점에서 requestFunction에 전달되는 매개변수의 타입이 정해진다. (24행 및 27행)
+
+export const useHttp = <T>(requestFunction: RequestFunctionType<T>) => {
+  const [data, setData] = useState<T | T[]>([]);
   const [error, setError] = useState<null | string>(null);
   const [status, setStatus] = useState<StatusType>("ready");
 
   const sendRequest = useCallback(
-    async <A>(params: A) => {
+    async <A>(params?: A) => {
       setStatus("loading");
       try {
         const responseData = await requestFunction(params);
         setData(responseData);
-        console.log(responseData);
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response) {
           //네트워크 요청에 관련한 에러

@@ -37,6 +37,6 @@ export const authAPI = {
       },
       { headers: header }
     );
-    return response;
+    return response.data;
   },
 };
