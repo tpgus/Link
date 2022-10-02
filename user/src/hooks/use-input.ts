@@ -1,22 +1,32 @@
 import React, { useState } from "react";
 
-export const useInput = <T extends Function>(validateFunc: T) => {
+interface ReturnType {
+  isValid: boolean;
+  errorMessage: string | null;
+}
+type ValidateFunc = (value: string) => ReturnType;
+
+export const useInput = (validateFunc: ValidateFunc) => {
   const [value, setValue] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
+  const [inputElementisTouched, setInputElementIsTouched] = useState(false);
+  const { isValid, errorMessage } = validateFunc(value);
 
   const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
-    setIsTouched(true);
-  };
-
-  const validateValue = () => {
-    return isTouched && validateFunc(value);
+    setInputElementIsTouched(true);
   };
 
   const resetValue = () => {
     setValue("");
-    setIsTouched(false);
+    setInputElementIsTouched(false);
   };
 
-  return { value, isTouched, inputHandler, validateValue, resetValue };
+  return {
+    value,
+    inputElementisTouched,
+    isValid,
+    errorMessage,
+    inputHandler,
+    resetValue,
+  };
 };

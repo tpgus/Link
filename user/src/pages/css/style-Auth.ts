@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const AuthContainer = styled.div`
   width: 25%;
   height: 70vh;
+  min-width: 400px;
   position: absolute;
   top: 50%;
   left: 50%;

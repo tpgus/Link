@@ -4,7 +4,9 @@ import { useState, useCallback } from "react";
 type StatusType = "ready" | "loading" | "completed";
 
 interface ErrorType {
-  error: string;
+  error: {
+    message: string;
+  };
 }
 
 export const useHttp = <T>(requestFunction: Function) => {
@@ -18,10 +20,12 @@ export const useHttp = <T>(requestFunction: Function) => {
       try {
         const responseData = await requestFunction(params);
         setData(responseData);
+        console.log(responseData);
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response) {
           //네트워크 요청에 관련한 에러
-          setError((error.response.data as ErrorType).error);
+          //과연 axios 요청에 대한 에러가 모두 이 형식일까?
+          setError((error.response.data as ErrorType).error.message);
         } else {
           //내가 의도적으로 발생시킬 수 있는 에러 : auth api 등 어딘가에서 throw new Error('에러')를 발생시키면 여기로 진입.
           setError((error as Error).message);
@@ -33,8 +37,15 @@ export const useHttp = <T>(requestFunction: Function) => {
     [requestFunction]
   );
 
+  const reset = () => {
+    setData([]);
+    setError(null);
+    setStatus("ready");
+  };
+
   return {
     sendRequest,
+    reset,
     data,
     error,
     status,
