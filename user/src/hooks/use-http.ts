@@ -16,7 +16,7 @@ type RequestFunctionType<T> = (value?: any) => Promise<T>;
 //실제 api를 요청하는 시점에서 requestFunction에 전달되는 매개변수의 타입이 정해진다. (24행 및 27행)
 
 export const useHttp = <T>(requestFunction: RequestFunctionType<T>) => {
-  const [data, setData] = useState<T | T[]>([]);
+  const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<null | string>(null);
   const [status, setStatus] = useState<StatusType>("ready");
 
@@ -43,7 +43,6 @@ export const useHttp = <T>(requestFunction: RequestFunctionType<T>) => {
   );
 
   const reset = () => {
-    setData([]);
     setError(null);
     setStatus("ready");
   };

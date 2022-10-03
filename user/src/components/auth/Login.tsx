@@ -1,12 +1,12 @@
 import kakaoBtn from "../../assets/kakao_login_medium.png";
 import { loginValidate } from "../../utils/validator";
-import { Container as LoginContainer } from "../style/common";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { authAPI } from "../../apis/api/auth";
-import { Link } from "react-router-dom";
 import { useHttp } from "../../hooks/use-http";
 import { useInput } from "../../hooks/use-input";
+import { Container as LoginContainer, Button } from "../style/styled";
+import { getErrorMessage } from "../../utils/getErrorMessage";
 import {
   LoginForm,
   SocialLogin,
@@ -14,7 +14,7 @@ import {
   SignupWrapper,
 } from "./css/style-Login";
 
-interface ResponseType {
+interface SignupResponseType {
   idToken: string;
   email: string;
   refreshToken: string;
@@ -29,7 +29,7 @@ const Login = () => {
   const [inputError, setInputError] = useState<string | null>(null);
   const id = useInput(loginValidate.id);
   const password = useInput(loginValidate.password);
-  const loginFetch = useHttp<ResponseType>(authAPI.signIn);
+  const loginFetch = useHttp<SignupResponseType>(authAPI.signIn);
 
   useEffect(() => {
     // 에러 메시지가 표시된 이후, 사용자가 다시 입력할 때 에러 메시지 숨기기
@@ -42,10 +42,26 @@ const Login = () => {
     }
   }, [formIsInValid, id.inputElementisTouched, password.inputElementisTouched]);
 
+  useEffect(() => {
+    // http 요청 성공에 따른 동작
+    // 아래의 로직을 기존에는 컴포넌트 최상단 스코프에서 바로 써주었지만,
+    // 그럴 경우 Login 컴포넌트가 모두 렌더링 되기 전에 navigate에 의해 이동되므로 에러가 발생한다.
+    if (
+      loginFetch.data &&
+      !loginFetch.error &&
+      loginFetch.status === "completed"
+    ) {
+      navigate("/home", { replace: true });
+    }
+  }, [loginFetch.data, loginFetch.error, loginFetch.status, navigate]);
+
   const loginHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id.isValid && password.isValid) {
-      loginFetch.sendRequest({ email: id.value, password: password.value });
+      loginFetch.sendRequest({
+        email: id.value,
+        password: password.value,
+      });
     } else {
       setInputError(id.errorMessage || password.errorMessage);
       setFormIsInvalid(true);
@@ -58,41 +74,17 @@ const Login = () => {
     alert(`${type} 로그인 클릭`);
   };
 
-  // http 요청 성공에 따른 동작
-  if (
-    loginFetch.data &&
-    !loginFetch.error &&
-    loginFetch.status === "completed"
-  ) {
-    navigate("/home", { replace: true });
-  }
-
   // http 요청 실패에 따른 동작
   if (loginFetch.error && loginFetch.status === "completed") {
+    const errorMessgae = getErrorMessage.signIn(loginFetch.error);
+    setInputError(errorMessgae);
     setFormIsInvalid(true);
-    switch (loginFetch.error) {
-      case "EMAIL_NOT_FOUND":
-        console.log(id.value);
-        setInputError("해당 아이디가 존재하지 않습니다");
-        break;
-
-      case "INVALID_EMAIL":
-        setInputError("이메일 형식의 아이디를 입력해 주세요");
-        break;
-
-      case "INVALID_PASSWORD":
-        setInputError("비밀번호가 틀렸습니다.");
-        break;
-
-      default:
-        setInputError(
-          `너무 많은 요청으로 인해 해당 계정으로 로그인을 할 수 없습니다.
-          잠시 후에 다시 시도해 주세요`
-        );
-        break;
-    }
     loginFetch.reset();
   }
+  // 상단의 http 요청 성공에 따른 동작 (useEffect 사용)과 비교하기
+  // 만약 요청 성공에 따른 동작들이 아래와 같이 Login 컴포넌트 자체에 재렌더링을 발생시킬 수 있는 동작이라면
+  // 위와 같이 사용해도 된다. 하지만, 요청 성공에 따른 동작은 Login 컴포넌트가 모두 렌더링되기 전에(중에) (navigate로 이동)
+  // 발생 하므로 에러 발생
 
   return (
     <LoginContainer>
@@ -110,9 +102,11 @@ const Login = () => {
           placeholder="비밀번호를 입력하세요"
         />
         <p className={formIsInValid ? "active" : ""}>
-          {inputError || "아이디와 비밀번호를 확인해 주세요"}
+          {inputError || "아이디 또는 비밀번호를 확인해 주세요"}
         </p>
-        <button type="submit">로그인</button>
+        <Button bgHeight="2.5rem" type="submit">
+          로그인
+        </Button>
       </LoginForm>
       <FindInformation>
         <ul>

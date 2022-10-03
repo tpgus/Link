@@ -15,27 +15,13 @@ export const LoginForm = styled.form`
     margin: 0.5rem;
   }
 
-  button {
-    width: 100%;
-    font-weight: bold;
-    margin-top: 1rem;
-    color: #fff;
-    background-color: rgb(224, 69, 45);
-    height: 2.5rem;
-    border: none;
-    cursor: pointer;
-    &:hover {
-      background-color: rgb(224, 110, 54);
-    }
-  }
-
   p {
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
     color: red;
     visibility: hidden;
-  }
-  .active {
-    visibility: visible;
+    &.active {
+      visibility: visible;
+    }
   }
 `;
 

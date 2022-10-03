@@ -8,16 +8,17 @@ export const Container = styled.div`
   align-items: center;
 `;
 
-export const Button = styled.button`
+interface ButtonProps {
+  bgHeight?: string;
+}
+
+export const Button = styled.button<ButtonProps>`
+  display: inline-block;
   width: 100%;
+  height: ${(props) => props.bgHeight && props.bgHeight};
   font-weight: bold;
-  margin-top: 1rem;
   color: #fff;
   background-color: rgb(224, 69, 45);
-  height: 2.5rem;
   border: none;
   cursor: pointer;
-  &:hover {
-    background-color: rgb(224, 110, 54);
-  }
 `;

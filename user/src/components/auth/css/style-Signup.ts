@@ -1,23 +1,21 @@
 import styled from "styled-components";
 
-export const SignupForm = styled.form`
+export const SignupWrapper = styled.div`
   width: 60%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 5rem;
+  padding: 3rem 0;
+  /* margin-top: 3rem; */
 
   input {
     width: 100%;
     border: 1px solid #9d9d9d;
     padding: 0.5rem;
-    margin: 0.5rem;
   }
 
   label {
     width: 100%;
-    display: inline-block;
     span {
       display: inline-block;
       overflow: hidden;
@@ -30,4 +28,28 @@ export const SignupForm = styled.form`
       vertical-align: top;
     }
   }
+`;
+
+export const IdWrapper = styled.div`
+  width: 100%;
+  .email-form {
+    display: flex;
+  }
+
+  button {
+    width: 30%;
+    cursor: pointer;
+  }
+
+  p {
+    color: #60c0fd;
+    font-size: 0.8rem;
+    /* visibility: hidden; */
+    /* display: none; */
+  }
+`;
+
+export const PasswordWrapper = styled.div`
+  margin-top: 1rem;
+  width: 100%;
 `;
