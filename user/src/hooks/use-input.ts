@@ -18,6 +18,9 @@ export const useInput = (validateFunc: ValidateFunc) => {
 
   const resetValue = () => {
     setValue("");
+  };
+
+  const resetTouched = () => {
     setInputElementIsTouched(false);
   };
 
@@ -28,5 +31,6 @@ export const useInput = (validateFunc: ValidateFunc) => {
     errorMessage,
     inputHandler,
     resetValue,
+    resetTouched,
   };
 };

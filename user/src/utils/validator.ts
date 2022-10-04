@@ -60,4 +60,8 @@ export const signUpValidate = {
       errorMessage: null,
     };
   },
+
+  checkConfirmPassword: (originPassword: string, confirmPassword: string) => {
+    return originPassword === confirmPassword;
+  },
 };

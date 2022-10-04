@@ -1,6 +1,6 @@
 /// <reference types="react-scripts" />
 
-declare interface ResponseType {
+declare interface SignupResponseType{
   idToken: string;
   email: string;
   refreshToken: string;

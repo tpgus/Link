@@ -12,6 +12,16 @@ interface SignupResponseType {
   registered: boolean;
 }
 
+interface ChangePasswordResponseType {
+  passwordHash: string;
+  providerUserInfo: Object[];
+  localId: string;
+  email: string;
+  idToken: string;
+  refreshToken: string;
+  expiresIn: string;
+}
+
 interface ParamsType {
   email: string;
   password: string;
@@ -44,6 +54,25 @@ export const authAPI = {
     const response = await firebaseAuthAPI.post<{ email: string }>(
       `accounts:sendOobCode?${query}`,
       { requestType: "VERIFY_EMAIL", idToken: idToken },
+      { headers: headerConfig }
+    );
+    return response.data;
+  },
+
+  changePassword: async ({
+    idToken,
+    newPassword,
+  }: {
+    idToken: string;
+    newPassword: string;
+  }) => {
+    const response = await firebaseAuthAPI.post<ChangePasswordResponseType>(
+      `accounts:update?${query}`,
+      {
+        idToken,
+        password: newPassword,
+        returnSecureToken: true,
+      },
       { headers: headerConfig }
     );
     return response.data;

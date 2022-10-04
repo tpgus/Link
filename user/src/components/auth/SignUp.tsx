@@ -20,14 +20,27 @@ interface SignupResponseType {
 const SignUp = () => {
   const id = useInput(signUpValidate.id);
   const password = useInput(signUpValidate.password);
-  const passwordConfirm = useInput(signUpValidate.password);
-  const [formIsValid, setFormIsValid] = useState(false);
+  const confirmPassword = useInput(signUpValidate.password);
+  const [isSamePassword, setIsSamePassword] = useState(false);
   const fakeSignupFetch = useHttp<SignupResponseType>(authAPI.signUp);
   const verifyEmailFetch = useHttp<{ email: string }>(authAPI.verifyEmail);
 
   const signUpHandler = () => {
     console.log("가입하기 클릭");
+    //삭제해야 하는 경우, 인증 버튼을 누르고, 가입하기 버튼을 누르지 않고 페이지를 벗어나는 경우
+    //가입하기를 눌렀을 경우 -> 패스워드 변경? 아니면 삭제 후 가입?
   };
+
+  useEffect(() => {
+    if (confirmPassword.inputElementisTouched) {
+      setIsSamePassword(
+        signUpValidate.checkConfirmPassword(
+          password.value,
+          confirmPassword.value
+        )
+      );
+    }
+  }, [confirmPassword, password.value]);
 
   const verifyEmail = () => {
     //Math.random()보다 암호학적으로 안전한 난수를 생성한다.
@@ -102,10 +115,13 @@ const SignUp = () => {
             <input
               type="password"
               placeholder="비밀번호 확인"
-              onChange={passwordConfirm.inputHandler}
-              value={passwordConfirm.value}
+              onChange={confirmPassword.inputHandler}
+              value={confirmPassword.value}
             />
           </form>
+          {!isSamePassword && confirmPassword.value.trim().length > 0 && (
+            <p>비밀번호가 일치하지 않습니다.</p>
+          )}
         </PasswordWrapper>
         <Button bgHeight="2.5rem" onClick={signUpHandler}>
           가입하기
