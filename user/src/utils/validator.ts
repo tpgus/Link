@@ -29,7 +29,7 @@ export const signUpValidate = {
     if (!emailPattern.test(value) || value.trim().length === 0) {
       return {
         isValid: false,
-        errorMessage: "이메일 형식의 아이디를 입력해 주세요",
+        errorMessage: "이메일 형식이 올바르지 않습니다.",
       };
     }
     return { isValid: true, errorMessage: null };

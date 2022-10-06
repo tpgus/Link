@@ -9,13 +9,13 @@ export const Container = styled.div`
 `;
 
 interface ButtonProps {
-  bgHeight?: string;
+  btnHeight?: string;
 }
 
 export const Button = styled.button<ButtonProps>`
   display: inline-block;
   width: 100%;
-  height: ${(props) => props.bgHeight && props.bgHeight};
+  height: ${(props) => props.btnHeight && props.btnHeight};
   font-weight: bold;
   color: #fff;
   background-color: rgb(224, 69, 45);

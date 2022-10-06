@@ -1,6 +1,8 @@
 import kakaoBtn from "../../assets/kakao_login_medium.png";
 import { loginValidate } from "../../utils/validator";
-import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../hooks/redux-hook";
+import { login } from "../../store/auth-slice";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authAPI } from "../../apis/api/auth";
 import { useHttp } from "../../hooks/use-http";
@@ -29,7 +31,10 @@ const Login = () => {
   const [inputError, setInputError] = useState<string | null>(null);
   const id = useInput(loginValidate.id);
   const password = useInput(loginValidate.password);
+  const idRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const loginFetch = useHttp<SignupResponseType>(authAPI.signIn);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // 에러 메시지가 표시된 이후, 사용자가 다시 입력할 때 에러 메시지 숨기기
@@ -51,23 +56,36 @@ const Login = () => {
       !loginFetch.error &&
       loginFetch.status === "completed"
     ) {
+      dispatch(login());
       navigate("/home", { replace: true });
     }
-  }, [loginFetch.data, loginFetch.error, loginFetch.status, navigate]);
+  }, [
+    loginFetch.data,
+    loginFetch.error,
+    loginFetch.status,
+    navigate,
+    dispatch,
+  ]);
 
   const loginHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    const { isValid: idIsValid, errorMessage: idErrorMessage } =
+      id.validateValue(idRef.current!.value);
+    const { isValid: passwordIsValid, errorMessage: passwordErrorMessage } =
+      password.validateValue(passwordRef.current!.value);
+
     event.preventDefault();
-    if (id.isValid && password.isValid) {
+    if (idIsValid && passwordIsValid) {
       loginFetch.sendRequest({
-        email: id.value,
-        password: password.value,
+        email: idRef.current!.value,
+        password: passwordRef.current!.value,
       });
     } else {
-      setInputError(id.errorMessage || password.errorMessage);
+      setInputError(idErrorMessage || passwordErrorMessage);
       setFormIsInvalid(true);
     }
     // id.resetValue();
-    password.resetValue();
+    passwordRef.current!.value = "";
+    password.focusHandler(false);
   };
 
   const socialLoginHandler = (type: string) => {
@@ -90,21 +108,21 @@ const Login = () => {
     <LoginContainer>
       <LoginForm onSubmit={loginHandler}>
         <input
-          onChange={id.inputHandler}
-          value={id.value}
           type="text"
           placeholder="아이디를 입력하세요"
+          ref={idRef}
+          onFocus={() => id.focusHandler(true)}
         />
         <input
-          onChange={password.inputHandler}
-          value={password.value}
           type="password"
           placeholder="비밀번호를 입력하세요"
+          ref={passwordRef}
+          onFocus={() => password.focusHandler(true)}
         />
         <p className={formIsInValid ? "active" : ""}>
           {inputError || "아이디 또는 비밀번호를 확인해 주세요"}
         </p>
-        <Button bgHeight="2.5rem" type="submit">
+        <Button btnHeight="2.5rem" type="submit">
           로그인
         </Button>
       </LoginForm>

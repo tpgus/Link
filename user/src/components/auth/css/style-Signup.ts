@@ -42,10 +42,16 @@ export const IdWrapper = styled.div`
   }
 
   p {
-    color: #60c0fd;
     font-size: 0.8rem;
-    /* visibility: hidden; */
-    /* display: none; */
+    visibility: hidden;
+    &.error {
+      visibility: visible;
+      color: red;
+    }
+    &.normal {
+      visibility: visible;
+      color: #60c0fd;
+    }
   }
 `;
 

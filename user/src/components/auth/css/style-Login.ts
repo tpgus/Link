@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const LoginForm = styled.form`
   width: 60%;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -9,6 +10,7 @@ export const LoginForm = styled.form`
   margin-top: 5rem;
 
   input {
+    appearance: none;
     width: 100%;
     border: 1px solid #9d9d9d;
     padding: 0.5rem;
@@ -16,7 +18,9 @@ export const LoginForm = styled.form`
   }
 
   p {
-    margin: 0.5rem 0;
+    padding-bottom: 0.5rem;
+    overflow: hidden;
+    width: 100%;
     color: red;
     visibility: hidden;
     &.active {
@@ -26,7 +30,7 @@ export const LoginForm = styled.form`
 `;
 
 export const FindInformation = styled.div`
-  margin-top: 0.5rem;
+  /* margin-top: 0.5rem; */
   display: flex;
   justify-content: end;
   width: 60%;

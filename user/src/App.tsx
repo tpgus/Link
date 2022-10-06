@@ -9,6 +9,7 @@ import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
 import FindId from "./components/auth/FindId";
 import FindPassword from "./components/auth/FindPassword";
+import VerificationEmail from "./pages/VerificationEmail";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="findId" element={<FindId />} />
         <Route path="findPassword" element={<FindPassword />} />
       </Route>
+      <Route path="/verification/email" element={<VerificationEmail />} />
     </Routes>
   );
 }

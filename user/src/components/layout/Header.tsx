@@ -3,21 +3,19 @@ import uuid from "react-uuid";
 import { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { HeaderContainer, Logo, NavMenu } from "./css/style-Header";
+import { useAppSelector } from "../../hooks/redux-hook";
 
-const menus = [
+const fixedMenus = [
   {
     name: "문의하기",
     path: "/qna",
   },
-  {
-    name: "로그인",
-    path: "/member/login",
-  },
 ];
 
 const Header = () => {
+  const { isLogin } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
-  const isLogin = false;
+  console.log(isLogin);
 
   return (
     <HeaderContainer>
@@ -26,7 +24,7 @@ const Header = () => {
       </Logo>
       <NavMenu>
         <ul>
-          {menus.map((menu) => (
+          {fixedMenus.map((menu) => (
             <li key={uuid()}>
               <NavLink
                 to={menu.path}
@@ -36,6 +34,13 @@ const Header = () => {
               </NavLink>
             </li>
           ))}
+          {
+            <li key={uuid()}>
+              <NavLink to={isLogin ? "/mypage" : "/member/login"}>
+                {isLogin ? "마이페이지" : "로그인"}
+              </NavLink>
+            </li>
+          }
         </ul>
       </NavMenu>
     </HeaderContainer>

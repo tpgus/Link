@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import crypto from "crypto-js";
 import { Container as SignupContainer, Button } from "../style/styled";
 import { SignupWrapper, IdWrapper, PasswordWrapper } from "./css/style-Signup";
@@ -21,7 +21,14 @@ const SignUp = () => {
   const id = useInput(signUpValidate.id);
   const password = useInput(signUpValidate.password);
   const confirmPassword = useInput(signUpValidate.password);
-  const [isSamePassword, setIsSamePassword] = useState(false);
+  const idRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const [isSamePassword, setIsSamePassword] = useState(true);
+  const [emailVerificationMessage, setEmailVerificationMessage] = useState({
+    type: "",
+    message: "",
+  });
   const fakeSignupFetch = useHttp<SignupResponseType>(authAPI.signUp);
   const verifyEmailFetch = useHttp<{ email: string }>(authAPI.verifyEmail);
 
@@ -31,18 +38,16 @@ const SignUp = () => {
     //가입하기를 눌렀을 경우 -> 패스워드 변경? 아니면 삭제 후 가입?
   };
 
-  useEffect(() => {
-    if (confirmPassword.inputElementisTouched) {
-      setIsSamePassword(
-        signUpValidate.checkConfirmPassword(
-          password.value,
-          confirmPassword.value
-        )
-      );
-    }
-  }, [confirmPassword, password.value]);
-
   const verifyEmail = () => {
+    const { isValid: idIsValid, errorMessage: idErrorMessage } =
+      id.validateValue(idRef.current!.value);
+    if (!idIsValid) {
+      setEmailVerificationMessage({
+        type: "error",
+        message: idErrorMessage!,
+      });
+      return;
+    }
     //Math.random()보다 암호학적으로 안전한 난수를 생성한다.
     const array = new Uint32Array(1);
     const temporalPassword = window.crypto.getRandomValues(array)[0];
@@ -51,9 +56,23 @@ const SignUp = () => {
       `${process.env.REACT_APP_SECRET_KEY}`
     ).toString();
     fakeSignupFetch.sendRequest({
-      email: id.value,
+      email: idRef.current!.value,
       password: encryptedPassword,
     });
+  };
+
+  const confrimPasswordHandler = () => {
+    if (
+      confirmPassword.inputElementisTouched &&
+      confirmPasswordRef.current!.value.trim().length > 0
+    ) {
+      setIsSamePassword(
+        signUpValidate.checkConfirmPassword(
+          passwordRef.current!.value,
+          confirmPasswordRef.current!.value
+        )
+      );
+    }
   };
 
   //정상 요청
@@ -63,11 +82,17 @@ const SignUp = () => {
     //재렌더링시 또 진입하고, 또 요청하고 또 진입한다. (재렌더링이 되어도 if 조건이 항상 참이기에)
     //그래서 재진입하지 않기 위해 reset을 호출하지만, 과연 reset을 호출하는 것이 맞나
     verifyEmailFetch.sendRequest(fakeSignupFetch.data?.idToken);
+    setEmailVerificationMessage({
+      type: "normal",
+      message: "인증 메일이 발송되었습니다. 이메일을 확인해 주세요",
+    });
     fakeSignupFetch.reset();
   }
 
   //에러 발생
   if (fakeSignupFetch.error && fakeSignupFetch.status === "completed") {
+    const errorMessage = getErrorMessage.signUp(fakeSignupFetch.error);
+    setEmailVerificationMessage({ type: "error", message: errorMessage });
     fakeSignupFetch.reset();
   }
 
@@ -93,13 +118,19 @@ const SignUp = () => {
             <input
               id="email"
               type="email"
-              value={id.value}
               placeholder="example@google.com"
-              onChange={id.inputHandler}
+              ref={idRef}
+              onFocus={() => id.focusHandler(true)}
             />
             <Button onClick={verifyEmail}>인증</Button>
           </form>
-          <p>{"인증 메일이 발송되었습니다. 이메일을 확인해 주세요"}</p>
+          <p
+            className={
+              emailVerificationMessage.type === "error" ? "error" : "normal"
+            }
+          >
+            {emailVerificationMessage.message}
+          </p>
         </IdWrapper>
         <PasswordWrapper>
           <label htmlFor="password">
@@ -109,21 +140,22 @@ const SignUp = () => {
             <input
               type="password"
               placeholder="숫자, 영문 조합 최소 8자"
-              onChange={password.inputHandler}
-              value={password.value}
+              ref={passwordRef}
+              onFocus={() => password.focusHandler(true)}
             />
             <input
               type="password"
               placeholder="비밀번호 확인"
-              onChange={confirmPassword.inputHandler}
-              value={confirmPassword.value}
+              ref={confirmPasswordRef}
+              onChange={confrimPasswordHandler}
+              onFocus={() => confirmPassword.focusHandler(true)}
             />
           </form>
-          {!isSamePassword && confirmPassword.value.trim().length > 0 && (
+          {!isSamePassword && confirmPassword.inputElementisTouched && (
             <p>비밀번호가 일치하지 않습니다.</p>
           )}
         </PasswordWrapper>
-        <Button bgHeight="2.5rem" onClick={signUpHandler}>
+        <Button btnHeight="2.5rem" onClick={signUpHandler}>
           가입하기
         </Button>
       </SignupWrapper>
