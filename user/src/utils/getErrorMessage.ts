@@ -11,7 +11,7 @@ const commonError = (errorType: string) => {
 export const getErrorMessage = {
   signUp: (errorType: string) => {
     switch (errorType) {
-      case "EMAIL_EXISTS":
+      case "auth/email-already-in-use":
         return "이미 존재하는 이메일입니다.";
 
       default:
@@ -20,6 +20,7 @@ export const getErrorMessage = {
   },
 
   signIn: (errorType: string) => {
+    console.log("signin error");
     switch (errorType) {
       case "EMAIL_NOT_FOUND":
         return "해당 아이디가 존재하지 않습니다.";
