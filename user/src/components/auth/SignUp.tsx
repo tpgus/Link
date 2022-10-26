@@ -44,11 +44,7 @@ const SignUp = () => {
   const verifyEmailFetch = useHttp<{ email: string }>(authAPI.verifyEmail);
   const fakeSignup = useHttp(signUp);
 
-  const [time, setTime] = useState(3);
   const [searchParams, setSearchParams] = useSearchParams();
-  const mode = searchParams.get("mode");
-  const continueUrl = searchParams.get("continueUrl");
-  const oobCode = searchParams.get("oobCode");
   const [flag, setFlag] = useState(false);
 
   const signUpHandler = () => {
@@ -63,12 +59,15 @@ const SignUp = () => {
       const intervalId = setInterval(() => {
         auth.currentUser?.reload();
         if (auth.currentUser?.emailVerified) {
-          console.log("인증 되었습니다.");
+          setEmailVerificationMessage({
+            type: "normal",
+            message: "인증이 완료되었습니다.",
+          });
           clearInterval(intervalId);
         } else {
           console.log("인증되지 않았습니다.");
         }
-      }, 3000);
+      }, 1000);
     }
   }, [flag]);
 
