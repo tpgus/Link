@@ -13,15 +13,22 @@ const VerificationEmail = () => {
   const oobCode = searchParams.get("oobCode");
 
   useEffect(() => {
-    switch (mode) {
-      case "verifyEmail":
-        handleVerifyEmail(auth, oobCode!, continueUrl!);
-    }
-  }, [continueUrl, mode, oobCode]);
+    handleVerifyEmail(auth, oobCode!, continueUrl!);
+  }, [continueUrl, mode, oobCode, time]);
 
   useEffect(() => {
-    // console.log(auth.currentUser);
-  }, []);
+    const intervalId = setInterval(() => {
+      if (time <= 0) {
+        clearInterval(intervalId);
+        window.close();
+      }
+      setTime((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [time]);
 
   const handleVerifyEmail = (
     auth: any,
